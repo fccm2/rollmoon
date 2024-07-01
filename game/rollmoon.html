@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>roll-moon :re</title>
+<style rel="stylesheet" type="text/css">
+body { background-color:#666; color:#FFF; }
+a { color:#222; }
+a:hover { color:#000; text-decoration:none; }
+a:active { color:#eee; }
+canvas {
+  background-color:#444;
+  margin:28px 20px 6px 100px;
+  border:1px solid #333;
+  box-shadow:-1px 2px 12px 1px rgba(0,0,0,0.5);
+}
+.desc {
+  margin:8px 101px;
+  text-shadow:2px 2px 3px #0008;
+  font-size:98%;
+  border-left:2px solid #223;
+  padding-left:0.5em;
+}
+</style>
+</head>
+<body>
+
+<canvas id="my_canvas" width="520" height="360">
+No support for HTML5 Canvas.
+</canvas>
+
+<script type="text/javascript" src="./caml-platform.js"></script>
+
+<script>var exports = {};</script>
+<script type="text/javascript" src="./rollmoon.js"></script>
+
+<div class="desc">
+  <p>Use Left and Right arrows to move.<br />
+     Try to touch every green circles.<br />
+     Press 'S' to zoom out.
+  </p>
+  <p>Sources:
+    <a href="./rollmoon.ml">rollmoon.ml</a> /
+    <a href="./canvas.res">canvas.res</a> /
+    <a href="./Makefile">Makefile</a>
+  <br />
+    License:
+    <a href="https://en.wikipedia.org/wiki/Zlib_License">Zlib</a>
+  </p>
+</div>
+
+<!--
+  This game is inspired by the SNES game "On The Ball".
+
+  I made a first version using Chipmunk and OpenGL libraries in 2008.
+  https://github.com/fccm/rolling-moon
+  http://decapode314.free.fr/ocaml/chipmunk/rolling-moon.html
+
+  This version was rewritten from scratch using physics functions provided
+  by ChatGPT, and importing the original levels from the first version.
+-->
+
+<noscript>
+No support for Javascript.
+</noscript>
+
+</body>
+</html>
