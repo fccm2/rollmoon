@@ -1,8 +1,12 @@
 (* A Simple Game, with 2D physics *)
 (* Copyright (C) 2024 Florent Monnier *)
-(* Permission is granted to anyone to use this software for any purpose,
- * including commercial applications, and to modify it and redistribute it freely.
- *)
+(*
+ To the extent permitted by law, you can use, modify, and redistribute
+ this software, and the associated elements, as long as you also respect
+ the distribution agreements of these associated elements.
+ 
+ The 2D physics functions was provided by ChatGPT.
+*)
 
 let width, height = (520, 360)
 

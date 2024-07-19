@@ -1,3 +1,19 @@
-To the extent permitted by law, Permission is granted to anyone to use this
-software for any purpose, including commercial applications, and to modify it
-and redistribute it freely.
+To the extent permitted by law, you can use, modify, and redistribute
+this software, and the associated elements, as long as you also respect
+the distribution agreements of these associated elements.
+
+
+Copyrights for the file "rollmoon.ml":
+- Copyright (C) 2024 Florent Monnier
+- The 2D physics functions was provided by ChatGPT.
+
+
+The contents of the file "caml-platform.js" comes from:
+  rescript-compiler-8.4.2
+
+Copyrights for the rescript-compiler-8.4.2:
+- Copyright (C) 2015-2016 Bloomberg Finance L.P.
+- Copyright (C) 1996 Institut National de Recherche en Informatique
+   et en Automatique.
+These library functions are based on the library functions of OCaml 4.06.1,
+and the license if these functions is the LGPL.

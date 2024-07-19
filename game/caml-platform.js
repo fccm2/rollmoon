@@ -1,3 +1,10 @@
+/* Copyright (C) 2015-2016 Bloomberg Finance L.P. */
+/* Copyright (C) 1996 Institut National de Recherche en Informatique */
+/*  et en Automatique. */
+/* From: rescript-compiler-8.4.2/ */
+/* Based on the OCaml API. */
+/* License: LGPL */
+
 'use strict';
 
 /* ./bs-platform/lib/js/caml_array.js */
