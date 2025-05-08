@@ -5,7 +5,7 @@ I made a first version using Chipmunk and OpenGL libraries in 2008:
 - http://decapode314.free.fr/ocaml/chipmunk/rolling-moon.html
 
 This version was rewritten from scratch using physics functions provided
-by ChatGPT, and importing the original levels from the first version.
+by a chat-bot, and importing the original levels from the first version.
 
 ### Play online:
 
