@@ -8,6 +8,63 @@
 
 
 
+
+function make1(param) {
+  return {
+          x: param[0],
+          y: param[1],
+          w: param[2],
+          h: param[3]
+        };
+}
+
+function make2(param, param$1) {
+  return {
+          x: param[0],
+          y: param[1],
+          w: param$1[0],
+          h: param$1[1]
+        };
+}
+
+function make4(x, y, w, h) {
+  return {
+          x: x,
+          y: y,
+          w: w,
+          h: h
+        };
+}
+
+function rects_collide(a, b) {
+  if ((a.x + a.w | 0) <= b.x || a.x >= (b.x + b.w | 0) || (a.y + a.h | 0) <= b.y) {
+    return false;
+  } else {
+    return a.y < (b.y + b.h | 0);
+  }
+}
+
+function rect_collide_point(r, param) {
+  var x = param[0];
+  if (x < r.x) {
+    return false;
+  }
+  var y = param[1];
+  if (y < r.y || x > (r.x + r.w | 0)) {
+    return false;
+  } else {
+    return y <= (r.y + r.h | 0);
+  }
+}
+
+var Rect = {
+  make1: make1,
+  make2: make2,
+  make4: make4,
+  rects_collide: rects_collide,
+  rect_collide_point: rect_collide_point
+};
+
 var canvas = document.getElementById("my_canvas");
 
 var ctx = canvas.getContext("2d");
@@ -19,6 +76,22 @@ var blue = "#00F";
 var white = "#FFF";
 
 var black = "#000";
+
+var day_colors = {
+  bg_color: "#C77",
+  seg_color: "#210",
+  circ_color: "#7C7"
+};
+
+var neon_colors = {
+  bg_color: blue,
+  seg_color: white,
+  circ_color: black
+};
+
+var colors = {
+  contents: neon_colors
+};
 
 function draw_circle(color, circle) {
   if (circle.static) {
@@ -53,17 +126,19 @@ function draw_segment(color, segment) {
 }
 
 function display_background(param) {
-  ctx.fillStyle = blue;
+  ctx.fillStyle = colors.contents.bg_color;
   ctx.fillRect(0, 0, 520, 360);
   
 }
 
 function display_level(circles, segments) {
+  var partial_arg = colors.contents.circ_color;
   List.iter((function (param) {
-          return draw_circle(black, param);
+          return draw_circle(partial_arg, param);
         }), circles);
+  var partial_arg$1 = colors.contents.seg_color;
   List.iter((function (param) {
-          return draw_segment(white, param);
+          return draw_segment(partial_arg$1, param);
         }), segments);
   
 }
@@ -233,8 +308,51 @@ var keys = {
   up: false,
   down: false,
   s: false,
-  n: false
+  n: false,
+  p: false
 };
+
+var left = make1([
+      0,
+      290,
+      70,
+      70
+    ]);
+
+var right = make1([
+      450,
+      290,
+      70,
+      70
+    ]);
+
+function ev_mousechange(mouse_change, ev) {
+  var match_0 = ev.offsetX;
+  var match_1 = ev.offsetY;
+  if (mouse_change) {
+    keys.left = false;
+    keys.right = false;
+    keys.up = false;
+    keys.down = false;
+    return ;
+  }
+  var y = match_1;
+  var x = match_0;
+  if (rect_collide_point(left, [
+          x,
+          y
+        ])) {
+    keys.left = true;
+  }
+  if (rect_collide_point(right, [
+          x,
+          y
+        ])) {
+    keys.right = true;
+    return ;
+  }
+  
+}
 
 function ev_keychange(key_change, ev) {
   var match = ev.keyCode;
@@ -257,6 +375,9 @@ function ev_keychange(key_change, ev) {
         switch (match$1) {
           case "n" :
               keys.n = false;
+              return ;
+          case "c" :
+          case "p" :
               return ;
           case "s" :
               keys.s = false;
@@ -281,10 +402,19 @@ function ev_keychange(key_change, ev) {
           return ;
       default:
         switch (match$1) {
-          case " " :
+          case "c" :
+              if (Caml_obj.caml_equal(colors.contents, neon_colors)) {
+                colors.contents = day_colors;
+              } else {
+                colors.contents = neon_colors;
+              }
               return ;
           case "n" :
               keys.n = true;
+              return ;
+          case " " :
+          case "p" :
+              keys.p = !keys.p;
               return ;
           case "s" :
               keys.s = true;
@@ -10026,8 +10156,10 @@ function animate(param) {
     hd: avatar,
     tl: _circles_1
   };
-  update_circles(_circles, segments.contents, gravity, 0.1, 0.6);
-  update_circles(_circles, segments.contents, gravity, 0.1, 0.6);
+  if (!keys.p) {
+    update_circles(_circles, segments.contents, gravity, 0.1, 0.6);
+    update_circles(_circles, segments.contents, gravity, 0.1, 0.6);
+  }
   display_background(undefined);
   ctx.save();
   var cx = avatar.cx | 0;
@@ -10094,6 +10226,14 @@ window.addEventListener("keyup", (function (param) {
         return ev_keychange(/* KeyUp */1, param);
       }), true);
 
+window.addEventListener("mousedown", (function (param) {
+        return ev_mousechange(/* MouseDown */0, param);
+      }), true);
+
+window.addEventListener("mouseup", (function (param) {
+        return ev_mousechange(/* MouseUp */1, param);
+      }), true);
+
 setInterval(animate, 38);
 
 var width = 520;
@@ -10102,11 +10242,9 @@ var height = 360;
 
 var red = "#F00";
 
-var bg_color = blue;
 
-var seg_color = white;
 
-var circ_color = black;
+
 
 
 

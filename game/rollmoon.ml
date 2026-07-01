@@ -8,6 +8,57 @@
  The 2D physics functions was provided by ChatGPT.
 *)
 
+module Rect : sig
+  type t = {
+    x: int;
+    y: int;
+    w: int;
+    h: int;
+  }
+
+  val make1 : int * int * int * int -> t
+  val make2 : pos:int * int -> dims:int * int -> t
+  val make4 : int -> int -> int -> int -> t
+
+  val rects_collide : t -> t -> bool
+  val rect_collide_point : t -> int * int -> bool
+
+end = struct
+
+  type t = {
+    x: int;
+    y: int;
+    w: int;
+    h: int;
+  }
+
+  let make1 (x, y, w, h) =
+    { x; y; w; h }
+
+  let make2 ~pos:(x, y) ~dims:(w, h) =
+    { x; y; w; h }
+
+  let make4 x y w h =
+    { x; y; w; h }
+
+  let rects_collide a b =
+    if ((a.x + a.w) <= b.x) then (false) else
+    if (a.x >= (b.x + b.w)) then (false) else
+    if ((a.y + a.h) <= b.y) then (false) else
+    if (a.y >= (b.y + b.h)) then (false) else
+    (true)
+  ;;
+
+  let rect_collide_point r (x, y) =
+    if (x < r.x) then (false) else
+    if (y < r.y) then (false) else
+    if (x > (r.x + r.w)) then (false) else
+    if (y > (r.y + r.h)) then (false) else
+    (true)
+  ;;
+end
+
+
 let width, height = (520, 360)
 
 type point = float * float
@@ -29,6 +80,7 @@ let canvas = Canvas.getElementById Canvas.document "my_canvas"
 let ctx = Canvas.getContext canvas "2d"
 
 type key_change = KeyDown | KeyUp
+type mouse_change = MouseDown | MouseUp
 
 let red   = "#F00"
 let green = "#0F0"
@@ -36,9 +88,33 @@ let blue  = "#00F"
 let white = "#FFF"
 let black = "#000"
 
-let bg_color = blue
-let seg_color = white
-let circ_color = black
+type colors = {
+  bg_color: string;
+  seg_color: string;
+  circ_color: string;
+}
+
+(*
+let day_colors = {
+  bg_color = "#EAA";
+  seg_color = "#210";
+  circ_color = "#7C7";
+}
+*)
+
+let day_colors = {
+  bg_color = "#C77";
+  seg_color = "#210";
+  circ_color = "#7C7";
+}
+
+let neon_colors = {
+  bg_color = blue;
+  seg_color = white;
+  circ_color = black;
+}
+
+let colors = ref neon_colors
 
 (* Draw Circle *)
 let draw_circle color circle =
@@ -79,7 +155,7 @@ let draw_segment color segment =
 (* Display Background *)
 let display_background () =
   (* Fill the background *)
-  Canvas.fillStyle ctx bg_color;
+  Canvas.fillStyle ctx !colors.bg_color;
   Canvas.fillRect ctx 0 0 width height;
   ()
 ;;
@@ -88,10 +164,10 @@ let display_background () =
 (* Display Level *)
 let display_level circles segments =
   (* Draw the circles *)
-  List.iter (draw_circle circ_color) circles;
+  List.iter (draw_circle !colors.circ_color) circles;
 
   (* Draw the segments *)
-  List.iter (draw_segment seg_color) segments;
+  List.iter (draw_segment !colors.seg_color) segments;
   ()
 ;;
 
@@ -250,8 +326,10 @@ type keys = {
   mutable down : bool;
   mutable s : bool;  (* scale out *)
   mutable n : bool;  (* next level *)
+  mutable p : bool;  (* pause level *)
 }
 
+(* Keys *)
 let keys = {
   left = false;
   right = false;
@@ -259,7 +337,25 @@ let keys = {
   down = false;
   s = false;
   n = false;
+  p = false;
 }
+
+(* Controlers *)
+let left = Rect.make1 (0, height - 70, 70, 70)
+let right = Rect.make1 (width - 70, height - 70, 70, 70)
+
+(* Mouse Change *)
+let ev_mousechange mouse_change ev =
+  match mouse_change, (ev.Canvas.offsetX, ev.Canvas.offsetY) with
+  | MouseDown, (x, y) ->
+      if Rect.rect_collide_point left (x, y) then keys.left <- true else () ;
+      if Rect.rect_collide_point right (x, y) then keys.right <- true else () ;
+  | MouseUp, (x, y) ->
+      (keys.left  <- false);
+      (keys.right <- false);
+      (keys.up    <- false);
+      (keys.down  <- false);
+;;
 
 (* Key Change *)
 let ev_keychange key_change ev =
@@ -281,7 +377,12 @@ let ev_keychange key_change ev =
   | KeyDown, _, "n" -> (keys.n  <- true)
   | KeyUp, _, "n" -> (keys.n  <- false)
 
-  | KeyDown, _, " " -> ()
+  | KeyDown, _, " "
+  | KeyDown, _, "p" -> (keys.p <- not keys.p)
+  | KeyUp, _, "p" -> ()
+
+  | KeyDown, _, "c" -> (if !colors = neon_colors then colors := day_colors else colors := neon_colors)
+  | KeyUp, _, "c" -> ()
 
   | _ -> ()
 ;;
@@ -1422,8 +1523,11 @@ let () =
     let _circles = avatar :: !circles in
 
     (* Update Circles *)
-    update_circles _circles !segments gravity dt restitution;
-    update_circles _circles !segments gravity dt restitution;
+    if not keys.p then
+    begin
+      update_circles _circles !segments gravity dt restitution;
+      update_circles _circles !segments gravity dt restitution;
+    end;
 
     (* Display Background *)
     display_background ();
@@ -1495,6 +1599,10 @@ let () =
   (* Event Listeners *)
   Canvas.addKeyEventListener Canvas.window "keydown" (ev_keychange KeyDown) true;
   Canvas.addKeyEventListener Canvas.window "keyup" (ev_keychange KeyUp) true;
+
+  (* Mouse Listener *)
+  Canvas.addMouseEventListener Canvas.window "mousedown" (ev_mousechange MouseDown) true;
+  Canvas.addMouseEventListener Canvas.window "mouseup" (ev_mousechange MouseUp) true;
 
   (* Animate at 26 frames by seconds *)
   let _ = Canvas.setInterval animate (1000/26) in

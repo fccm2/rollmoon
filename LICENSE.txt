@@ -3,9 +3,9 @@ this software, and the associated elements, as long as you also respect
 the distribution agreements of these associated elements.
 
 
-Copyrights for the file "rollmoon.ml":
-- Copyright (C) 2024 Florent Monnier
-- The 2D physics functions was provided by ChatGPT.
+Authors for the file "rollmoon.ml":
+- Florent Monnier, code re-written in 2024, and levels from 2008,
+- the 2D physics functions was provided by chat-gpt.
 
 
 The contents of the file "caml-platform.js" comes from:
@@ -16,4 +16,6 @@ Copyrights for the rescript-compiler-8.4.2:
 - Copyright (C) 1996 Institut National de Recherche en Informatique
    et en Automatique.
 These library functions are based on the library functions of OCaml 4.06.1,
-and the license if these functions is the LGPL.
+and the license if these functions is the LGPL, with some additional
+conditions (see the original for the details.)
+
